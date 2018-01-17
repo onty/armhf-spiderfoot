@@ -24,18 +24,18 @@ RUN apk update && apk add \
   curl \
   git \ 
   python2 \
-  libressl-dev \
+  openssl-dev \
   libxml2-dev \
   libxslt-dev \
   py2-pip  \
   python2-dev \
   py2-setuptools \
   py2-lxml \
-  py2-crypto \
   py2-requests \
   swig 
 
-RUN pip install cherrypy lxml mako netaddr
+RUN pip install --upgrade pip \
+	&& pip install bs4 m2crypto cherrypy lxml mako netaddr
 
 # Create a dedicated/non-privileged user to run the app.
 RUN addgroup spiderfoot && \
@@ -51,10 +51,10 @@ RUN curl -sSL https://github.com/smicallef/spiderfoot/archive/v$SPIDERFOOT_VERSI
   && chown -R spiderfoot:spiderfoot /home/spiderfoot
 
 USER spiderfoot
-WORKDIR /home/spiderfoot
+WORKDIR /home/spiderfoot/spiderfoot-$SPIDERFOOT_VERSION-final
 
 EXPOSE 8080
 
 # Run the application.
-ENTRYPOINT ["/usr/bin/python"] 
+ENTRYPOINT ["/usr/bin/python2"] 
 CMD ["sf.py", "0.0.0.0:8080"]
