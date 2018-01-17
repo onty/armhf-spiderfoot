@@ -15,34 +15,31 @@
 # 
 # 
 # Pull the base image.
-FROM armv7/armhf-ubuntu:latest
+FROM arm32v6/alpine:latest
 
 # Install pre-requisites.
-RUN apt-get update && apt-get install -y \
-  build-essential \
+RUN apk update && apk add \
+  g++ \
+  make \
   curl \
   git \ 
-  libssl-dev \
+  python2 \
+  libressl-dev \
   libxml2-dev \
-  libxslt1-dev \
-  python-pip  \
-  python-dev \
-  python-setuptools \
-  python-lxml \
-  python-m2crypto \
-  python-bs4 \
-  python-requests \
-  swig \
-  --no-install-recommends
+  libxslt-dev \
+  py2-pip  \
+  python2-dev \
+  py2-setuptools \
+  py2-lxml \
+  py2-crypto \
+  py2-requests \
+  swig 
 
-RUN rm -rf /var/lib/apt/lists/* \
-  && cd /usr/include/openssl/ \
-  && ln -s ../x86_64-linux-gnu/openssl/opensslconf.h . \
-  && pip install cherrypy lxml mako netaddr
+RUN pip install cherrypy lxml mako netaddr
 
 # Create a dedicated/non-privileged user to run the app.
 RUN addgroup spiderfoot && \
-    useradd -r -g spiderfoot -d /home/spiderfoot -s /sbin/nologin -c "SpiderFoot User" spiderfoot
+    adduser -D -G spiderfoot -h /home/spiderfoot -s /sbin/nologin -g "SpiderFoot User" spiderfoot
 
 ENV SPIDERFOOT_VERSION 2.10
 
